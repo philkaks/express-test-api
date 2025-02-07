@@ -1,6 +1,7 @@
 const express = require("express");
 const usersRoutes = require("./routes/users_routes");
 const itemsRoutes = require("./routes/item_routes");
+const listingPostRoutes = require("./routes/listing_post_routes");
 
 const app = express();
 app.use(express.json());
@@ -8,6 +9,7 @@ app.use(express.json());
 // Mount routes
 app.use("/v1/users", usersRoutes);
 app.use("/v1/items", itemsRoutes);
+app.use("/v1/listing", listingPostRoutes);
 
 module.exports = app;
 
