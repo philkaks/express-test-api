@@ -36,7 +36,7 @@ app.post("/upload", async (req, res) => {
 
         const fileStream = Readable.from(file.buffer)
 
-        const fileUpload = storage.file('test/${file.originalname}')
+        const fileUpload = storage.file(`test/${file.originalname}`)
 
         const writeStream = fileUpload.createWriteStream({
             metadata: {
@@ -51,7 +51,7 @@ app.post("/upload", async (req, res) => {
             try {
                 await fileUpload.makePublic();
 
-                const publicUrl = 'https://storage.googleapis.com/${storage.name}/${fileUpload.name}';
+                const publicUrl = `https://storage.googleapis.com/${storage.name}/${fileUpload.name}`;
 
                 console.log("File Upload Complete")
 
