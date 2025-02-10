@@ -2,9 +2,15 @@ const express = require("express");
 const usersRoutes = require("./routes/users_routes");
 const itemsRoutes = require("./routes/item_routes");
 const listingPostRoutes = require("./routes/listing_post_routes");
+const cors = require("cors");
+const fileParser = require("express-multipart-file-parser");
+const bodyParser = require("body-parser");
 
 const app = express();
 app.use(express.json());
+app.use(fileParser);
+app.use(cors({ origin: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Mount routes
 app.use("/v1/users", usersRoutes);

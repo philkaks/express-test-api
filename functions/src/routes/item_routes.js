@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { addItem , getItems} = require("../services/item_service");
+const { addItem, getItems, uploadImage } = require("../services/item_service");
 
 
 router.post("/add", async (req, res) => {
@@ -34,6 +34,27 @@ router.get("/getAll", async (req, res) => {
   } catch (error) {
     console.error("Error getting items:", error);
     return res.status(500).json({ error: "Failed to add item" });
+  }
+});
+
+
+// Upload an image
+router.post("/upload", async (req, res) => {
+  try {
+    const file = req.files[0]; // Extract the file from request
+
+    if (!file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const uploadedImageUrl = await uploadImage(file);
+    res.status(200).send({
+      fileUrl: uploadedImageUrl,
+      message: "Image uploaded successfully"
+    });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 

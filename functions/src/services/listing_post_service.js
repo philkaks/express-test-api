@@ -1,4 +1,4 @@
-const db = require("../firebase");
+const {db, storage} = require("../firebase");
 
 const collectionName = "Posts";
 const postsRef = db.collection(collectionName);
