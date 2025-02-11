@@ -1,5 +1,6 @@
 const { db, storage } = require("../firebase");
 const { Readable } = require("stream");
+const { v4: uuidv4 } = require("uuid");
 
 const collectionName = "Items";
 const itemsRef = db.collection(collectionName);
@@ -45,7 +46,7 @@ const uploadImage = (file) => {
   return new Promise((resolve, reject) => {
     try {
       const fileStream = Readable.from(file.buffer);
-      const fileUpload = storage.file(`test/${file.originalname}`);
+      const fileUpload = storage.file(`Items/${uuidv4()}_${file.originalname}`);
 
       const writeStream = fileUpload.createWriteStream({
         metadata: {
@@ -77,4 +78,48 @@ const uploadImage = (file) => {
 };
 
 
-module.exports = { addItem, getItems, uploadImage };
+//Edit Item
+const editItem = async (postId, updatedFields) => {
+  if (!postId || !updatedFields || Object.keys(updatedFields).length === 0) {
+    throw new Error("Item ID and at least one field to update are required");
+  }
+
+  try {
+    await itemsRef.doc(postId).update({
+      ...updatedFields,
+      updatedAt: new Date().toISOString(), // Track the update time
+    });
+
+    console.log("Updated Item with ID:", postId);
+    return { message: "Item updated successfully", id: postId };
+  } catch (error) {
+    console.error("Error updating item:", error);
+    throw error;
+  }
+};
+
+
+// Get a single item by ID
+const getItemById = async (itemId) => {
+  if (!itemId) {
+    throw new Error("Item ID is required");
+  }
+
+  try {
+    const doc = await itemsRef.doc(itemId).get();
+
+    if (!doc.exists) {
+      throw new Error("Item not found");
+    }
+
+    return { id: doc.id, ...doc.data() }; // Return the item data with the ID
+  } catch (error) {
+    console.error("Error fetching item:", error);
+    throw error;
+  }
+};
+
+
+
+
+module.exports = { addItem, getItems, uploadImage, editItem, getItemById };

@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const {
-    addPost,
-    editPost,
-    getAllPostsByUser,
-    deletePost,
+  addPost,
+  editPost,
+  getAllPostsByUser,
+  deletePost,
+  getPostById,
 } = require("../services/listing_post_service");
 
 // Add a new post
@@ -71,6 +72,23 @@ router.delete("/delete/:postId", async (req, res) => {
         return res.status(500).json({ error: error });
     }
 });
+
+// Get a specific post by ID
+router.get("/get/:postId", async (req, res) => {
+    const { postId } = req.params;
+
+    if (!postId) {
+        return res.status(400).json({ error: "Post ID is required" });
+    }
+
+    try {
+        const post = await getPostById(postId);
+        return res.status(200).json({ message: "Post retrieved successfully", post });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
+
 
 //validate adding post
 const validatePost = (post) => {

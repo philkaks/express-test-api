@@ -83,5 +83,29 @@ const deletePost = async (postId) => {
   }
 };
 
+//Get post by ID
+const getPostById = async (postId) => {
+  if (!postId) throw new Error("Post ID is required");
 
-module.exports = { addPost, editPost, getAllPostsByUser, deletePost };
+  try {
+    const postSnapshot = await postsRef.doc(postId).get();
+
+    if (!postSnapshot.exists) {
+      throw new Error("Post not found");
+    }
+
+    return { id: postSnapshot.id, ...postSnapshot.data() };
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    throw error;
+  }
+};
+
+
+module.exports = {
+  addPost,
+  editPost,
+  getAllPostsByUser,
+  deletePost,
+  getPostById,
+};

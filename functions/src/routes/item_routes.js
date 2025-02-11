@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { addItem, getItems, uploadImage } = require("../services/item_service");
+const {
+  addItem,
+  getItems,
+  uploadImage,
+  editItem,
+  getItemById,
+} = require("../services/item_service");
 
 
 router.post("/add", async (req, res) => {
@@ -58,6 +64,53 @@ router.post("/upload", async (req, res) => {
   }
 });
 
+
+// Edit a item
+router.put("/edit/:id", async (req, res) => {
+    const { id: itemId } = req.params;
+    const { updatedFields } = req.body;
+
+    const validationError = validateItemUpdate(itemId, updatedFields);
+
+    if (validationError) {
+        return res.status(400).json({ error: validationError });
+    }
+
+    try {
+        const result = await editItem(itemId, updatedFields);
+        return res.status(200).json(result);
+    } catch (error) {
+        return res.status(500).json({ error: "Failed to update item" + error });
+    }
+});
+
+// Get an item by ID
+router.get("/get/:id", async (req, res) => {
+  const { id: itemId } = req.params;
+
+  if (!itemId) {
+    return res.status(400).json({ error: "Item ID is required" });
+  }
+
+  try {
+    const item = await getItemById(itemId);
+    return res.status(200).json({ message: "Item retrieved successfully", item });
+  } catch (error) {
+    console.error("Error fetching item:", error);
+    return res.status(500).json({ error: error.message || "Failed to retrieve item" });
+  }
+});
+
+
+
+//validate Post Update
+const validateItemUpdate = (itemId, updatedFields) => {
+    if (!itemId) return "item ID is required";
+    if (!updatedFields || Object.keys(updatedFields).length === 0) {
+        return "At least one field to update is required";
+    }
+    return null; // No errors
+};
 
 
 
