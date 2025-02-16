@@ -3,14 +3,15 @@ const router = express.Router();
 const {
   addPost,
   editPost,
-  getAllPostsByUser,
+    getAllPostsByUser,
+  getAllPosts,
   deletePost,
   getPostById,
 } = require("../services/listing_post_service");
 
 // Add a new post
 router.post("/add", async (req, res) => {
-    
+
   const { data } = req.body;
   const validationError = validatePost(data);
 
@@ -58,6 +59,18 @@ router.get("/getAll/:userId", async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: error });
     }
+});
+
+//get all posts
+router.get("/getAll", async (req, res) => {
+  try {
+    const posts = await getAllPosts();
+    return res
+      .status(200)
+      .json({ message: "All posts retrieved successfully", posts });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 });
 
 //Delete a post

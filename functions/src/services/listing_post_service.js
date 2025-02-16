@@ -59,6 +59,24 @@ const getAllPostsByUser = async (userId) => {
   }
 };
 
+// Get all posts (listings)
+const getAllPosts = async () => {
+  try {
+    const snapshot = await postsRef.get();
+    const posts = [];
+
+    snapshot.forEach((doc) => {
+      posts.push({ id: doc.id, ...doc.data() });
+    });
+
+    return posts;
+  } catch (error) {
+    console.error("Error fetching all posts:", error);
+    throw error;
+  }
+};
+
+
 
 //Delete post
 const deletePost = async (postId) => {
@@ -106,6 +124,7 @@ module.exports = {
   addPost,
   editPost,
   getAllPostsByUser,
+  getAllPosts,
   deletePost,
   getPostById,
 };

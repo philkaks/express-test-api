@@ -10,20 +10,18 @@ const {
 
 
 router.post("/add", async (req, res) => {
-  const { item } = req.body;
+  const { data } = req.body;
 
-  // Check if item exists and if createdBy is present and not empty
-  if (!item || !item.createdBy || item.createdBy.trim() === "") {
+  // Check if item exists 
+  if (!data) {
     return res
       .status(400)
-      .json({ error: "Item details and a valid createdBy ID are required" });
+      .json({ error: "Item details required" });
   }
 
   try {
-    const addedItemId = await addItem(item);
-    return res
-      .status(200)
-      .json({ message: "Item added successfully", id: addedItemId });
+    const addedItemId = await addItem(data);
+    return res.status(200).json({ data: { id: addedItemId } });
   } catch (error) {
     console.error("Error adding item:", error);
     return res.status(500).json({ error: "Failed to add item" });
@@ -55,8 +53,7 @@ router.post("/upload", async (req, res) => {
 
     const uploadedImageUrl = await uploadImage(file);
     res.status(200).send({
-      fileUrl: uploadedImageUrl,
-      message: "Image uploaded successfully"
+      data: { url: uploadedImageUrl },
     });
   } catch (error) {
     console.error("Error uploading image:", error);
