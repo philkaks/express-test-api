@@ -10,22 +10,23 @@ const {
 
 // Add a new post
 router.post("/add", async (req, res) => {
-    const { post } = req.body;
-    const validationError = validatePost(post);
+    
+  const { data } = req.body;
+  const validationError = validatePost(data);
 
-    if (validationError) {
-        return res.status(400).json({ error: validationError });
-    }
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+    
+  }
 
-    try {
-        const postId = await addPost(post);
-        return res
-            .status(201)
-            .json({ message: "Post added successfully", id: postId });
-    } catch (error) {
-        return res.status(500).json({ error: "Failed to add post" + error });
-    }
+  try {
+    const postId = await addPost(data);
+    return res.status(201).json({ data: { id: postId } });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to add post" + error });
+  }
 });
+
 
 // Edit a post
 router.put("/edit/:id", async (req, res) => {
